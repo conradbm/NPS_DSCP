@@ -53,8 +53,10 @@ autoplot(closingPrices, series="Data") +
 ### CLASSICAL DECOMPOSITION
 ### Sometimes examining the trend can help you find windows of opportunity that avoid high peaks or low valleys
 ###
+
 df$Date %>%  head
 ts_df_close<-ts(df$Close,
+                start=c(2014, 4, 21),
                 frequency =365.25)
 ?ts
 ts.plot(ts_df_close)
@@ -70,12 +72,16 @@ fit$seasonal %>% length
 ts_df_close
 fit <- stl(ts_df_close,t.window=31, s.window="periodic",
            robust=TRUE)
+fit %>% tail
 fit %>% autoplot()
 fit %>% seasadj() %>% naive() %>%
   autoplot() + ylab("Closing ($)") + xlab("Day Number")
   ggtitle("TQQQ Prediction Interval" ,subtitle="Naive forecasts of seasonally adjusted data")
 
-fit %>% seasadj() %>%  head(10)
-preds <- fit %>% seasadj() %>% naive()
-preds
+  
+plt <- fit %>% forecast %>% autoplot() + ggtitle("TQQQ Prediction Interval", subtitle="10 Day Forecast")
+plt <- plt + scale_x_continuous(breaks=seq(2014,2019,1)) + scale_y_continuous(breaks=seq(-100,300,50))
+plt
+
+
 
